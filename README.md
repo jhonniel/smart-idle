@@ -1,6 +1,8 @@
 # mimi
 
-Hidden Windows idle monitor. After **2 minutes** of no keyboard/mouse activity, it taps **Ctrl** every **30 seconds** until you use the PC again. No mouse movement.
+Hidden Windows idle monitor. After **2 minutes** of no keyboard/mouse activity, it taps a **safe key** every **30 seconds** until you use the PC again. No mouse movement.
+
+Safe keys are non-typing only (`F15`, `F16`, `Ctrl`, `Shift`) so the focused app does not receive letters or numbers.
 
 Also blocks screenshots for **capture apps** (for example Hubstaff-style screen samples): your screen looks normal to you, but those apps should get a **black / blank** image instead of your real desktop.
 
@@ -39,7 +41,7 @@ Put these files in one folder, for example:
 
 | File | Purpose |
 |------|---------|
-| `mimi.py` | Main script (idle Ctrl + screenshot block) |
+| `mimi.py` | Main script (safe-key keep-awake + screenshot block) |
 | `mimi.vbs` | Hidden launcher (no console window) |
 | `requirements.txt` | Python dependencies |
 
@@ -77,10 +79,11 @@ You should see:
 ```text
 mimi is running...
 Screenshot block is ON (capture apps get black screen).
-Automatic Ctrl press starts after 2 minutes of inactivity.
+Safe-key keep-awake starts after 2 minutes of inactivity.
+Safe keys: f15, f16, ctrl, shift
 ```
 
-Leave the PC idle for 2 minutes — it should print when Ctrl is pressed. Press `Ctrl+C` to stop.
+Leave the PC idle for 2 minutes — it should print when a safe key is pressed. Press `Ctrl+C` to stop.
 
 To test screenshot blocking: with mimi running, take a screenshot from another app (or Snipping Tool / Win+Shift+S). Captured windows should appear black. Your live screen should still look normal.
 
@@ -128,8 +131,8 @@ After this, mimi starts automatically every time you sign in to Windows.
 ## How it works
 
 1. Watches Windows idle time (`GetLastInputInfo`).
-2. If idle for **120 seconds**, presses **Ctrl** once.
-3. While still idle, presses **Ctrl** again every **30 seconds**.
+2. If idle for **120 seconds**, presses one **random safe key** from `F15`, `F16`, `Ctrl`, `Shift`.
+3. While still idle, presses another random safe key every **30 seconds**.
 4. If you move the mouse or type, automatic presses stop until idle again.
 5. Every **2 seconds**, marks visible windows with Windows `SetWindowDisplayAffinity` (`WDA_EXCLUDEFROMCAPTURE`, fallback `WDA_MONITOR`) so screenshot / monitoring apps (like Hubstaff samples) should get black / blank content. You still see the screen normally.
 
@@ -148,9 +151,10 @@ After this, mimi starts automatically every time you sign in to Windows.
 Edit `mimi.py`:
 
 ```python
-IDLE_LIMIT = 120          # seconds before first Ctrl press
-PRESS_INTERVAL = 30       # seconds between Ctrl presses while idle
+IDLE_LIMIT = 120          # seconds before first keep-awake press
+PRESS_INTERVAL = 30       # seconds between presses while idle
 PROTECT_INTERVAL = 2      # seconds between screenshot-block refreshes
+SAFE_KEYS = ("f15", "f16", "ctrl", "shift")  # non-typing keys only
 ```
 
 After changing settings, restart mimi (stop the old process, then run `mimi.vbs` again).

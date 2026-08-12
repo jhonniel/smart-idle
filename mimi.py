@@ -1,5 +1,5 @@
+import random
 import time
-import ctypes
 from ctypes import Structure, windll, c_uint, sizeof, byref, WINFUNCTYPE
 from ctypes.wintypes import HWND, LPARAM, BOOL
 
@@ -8,13 +8,17 @@ import pyautogui
 user32 = windll.user32
 kernel32 = windll.kernel32
 
-# Windows display affinity — capture apps (Hubstaff-style screenshots) see black / no content
+# Windows display affinity — capture apps see black / no content
 WDA_MONITOR = 0x00000001
-WDA_EXCLUDEFROMCAPTURE = 0x00000011  # stronger; Win10 2004+
+WDA_EXCLUDEFROMCAPTURE = 0x00000011  # Win10 2004+
 
-IDLE_LIMIT = 120          # 2 minutes before starting Ctrl presses
-PRESS_INTERVAL = 30       # Press Ctrl every 30 seconds while idle
+IDLE_LIMIT = 120          # 2 minutes before starting keep-awake presses
+PRESS_INTERVAL = 30       # Seconds between presses while idle
 PROTECT_INTERVAL = 2      # Re-apply screenshot block every N seconds
+
+# Safe keys only: no letters/numbers/symbols, so nothing is typed into the active app.
+# F15/F16 are usually unbound; modifiers are tap-only (no text).
+SAFE_KEYS = ("f15", "f16", "ctrl", "shift")
 
 
 class LASTINPUTINFO(Structure):
@@ -36,8 +40,6 @@ def get_idle_time():
 
 
 def _protect_window(hwnd, _lparam):
-    # Visible top-level windows only — you still see the screen normally.
-    # Apps that take screenshots (e.g. Hubstaff) should get black / blank content.
     if user32.IsWindowVisible(hwnd):
         if not user32.SetWindowDisplayAffinity(hwnd, WDA_EXCLUDEFROMCAPTURE):
             user32.SetWindowDisplayAffinity(hwnd, WDA_MONITOR)
@@ -48,39 +50,39 @@ _enum_callback = EnumWindowsProc(_protect_window)
 
 
 def block_screenshots():
-    """
-    Mark visible windows so screenshot/monitoring apps get black (or no) content.
-    Your live screen stays normal; only capturing apps are affected.
-    """
+    """Mark visible windows so capture apps get black / blank content."""
     user32.EnumWindows(_enum_callback, 0)
+
+
+def press_safe_key():
+    key = random.choice(SAFE_KEYS)
+    pyautogui.press(key)
+    return key
 
 
 print("mimi is running...")
 print("Screenshot block is ON (capture apps get black screen).")
-print("Automatic Ctrl press starts after 2 minutes of inactivity.")
+print("Safe-key keep-awake starts after 2 minutes of inactivity.")
+print(f"Safe keys (random each press): {', '.join(SAFE_KEYS)}")
 
 last_protect = 0.0
 
 while True:
     now = time.time()
 
-    # Keep re-applying so new windows are also protected
     if now - last_protect >= PROTECT_INTERVAL:
         block_screenshots()
         last_protect = now
 
     idle_time = get_idle_time()
 
-    # User is active
     if idle_time < IDLE_LIMIT:
         time.sleep(1)
         continue
 
-    # User has been idle for 2 minutes — press Ctrl only (no mouse)
-    pyautogui.press("ctrl")
-    print("Idle for 2 minutes -> Ctrl pressed")
+    key = press_safe_key()
+    print(f"Idle for 2 minutes -> safe key pressed ({key})")
 
-    # Our keypress resets idle time; wait briefly then watch for real user input
     time.sleep(0.5)
     baseline = get_idle_time()
 
@@ -93,9 +95,8 @@ while True:
         time.sleep(1)
         current = get_idle_time()
 
-        # Idle time dropped => user pressed a key or moved the mouse
         if current < baseline:
-            print("User activity detected -> automatic Ctrl press stopped")
+            print("User activity detected -> automatic keep-awake stopped")
             break
 
         baseline = current
