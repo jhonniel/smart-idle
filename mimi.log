@@ -35195,3 +35195,66 @@ pyautogui.FailSafeException: PyAutoGUI fail-safe triggered from mouse moving to 
 [2026-10-28 13:51:13] Idle keep-awake -> safe key pressed (f15)
 [2026-10-28 13:55:20] Idle keep-awake -> safe key pressed (ctrl)
 [2026-10-28 13:55:33] User activity detected -> keep-awake paused
+[2026-10-28 13:58:31] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 14:00:32] Idle keep-awake -> safe key pressed (f15)
+[2026-10-28 14:02:32] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 14:04:33] Idle keep-awake -> safe key pressed (f16)
+[2026-10-28 14:06:34] Idle keep-awake -> safe key pressed (shift)
+[2026-10-28 14:08:34] Idle keep-awake -> safe key pressed (shift)
+[2026-10-28 14:10:35] Idle keep-awake -> safe key pressed (f16)
+[2026-10-28 14:12:36] Idle keep-awake -> safe key pressed (shift)
+[2026-10-28 14:19:09] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 14:21:10] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 14:23:10] Idle keep-awake -> safe key pressed (f15)
+[2026-10-28 14:25:11] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 14:27:12] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 14:29:12] Idle keep-awake -> safe key pressed (f16)
+[2026-10-28 14:35:54] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 14:37:54] Idle keep-awake -> safe key pressed (f16)
+[2026-10-28 14:39:55] Idle keep-awake -> safe key pressed (shift)
+[2026-10-28 14:41:56] Idle keep-awake -> safe key pressed (f15)
+[2026-10-28 14:42:12] User activity detected -> keep-awake paused
+[2026-10-28 14:51:31] mimi started
+[2026-10-28 15:00:34] Idle keep-awake -> safe key pressed (shift)
+[2026-10-28 15:02:35] Idle keep-awake -> safe key pressed (f15)
+[2026-10-28 15:05:34] mimi started on Windows
+[2026-10-28 15:05:42] mimi started on Windows
+[2026-10-28 15:15:48] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 15:24:27] Idle keep-awake -> safe key pressed (f15)
+[2026-10-28 16:02:22] Idle keep-awake -> safe key pressed (f15)
+[2026-10-28 16:06:41] Idle keep-awake -> safe key pressed (f16)
+[2026-10-28 16:07:04] User activity detected -> keep-awake paused
+[2026-10-28 16:13:34] Idle keep-awake -> safe key pressed (shift)
+[2026-10-28 16:18:41] Idle keep-awake -> safe key pressed (shift)
+[2026-10-28 16:21:25] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 16:25:34] Idle keep-awake -> safe key pressed (f15)
+[2026-10-28 16:28:13] Idle keep-awake -> safe key pressed (shift)
+[2026-10-28 16:45:31] Idle keep-awake -> safe key pressed (shift)
+[2026-10-28 16:53:28] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 16:55:29] Idle keep-awake -> safe key pressed (f15)
+[2026-10-28 16:57:30] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 16:57:53] User activity detected -> keep-awake paused
+[2026-10-28 17:09:52] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 17:10:01] User activity detected -> keep-awake paused
+[2026-10-28 17:16:26] Idle keep-awake -> safe key pressed (f16)
+[2026-10-28 17:18:26] Idle keep-awake -> safe key pressed (f16)
+[2026-10-28 17:18:32] User activity detected -> keep-awake paused
+[2026-10-28 17:24:02] mimi started on Windows
+[2026-10-28 17:24:14] mimi started on Windows
+[2026-10-28 17:26:29] Idle keep-awake -> safe key pressed (f16)
+[2026-10-28 17:28:30] Idle keep-awake -> safe key pressed (f15)
+[2026-10-28 17:30:31] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 17:32:31] Idle keep-awake -> safe key pressed (f16)
+[2026-10-28 17:34:32] Idle keep-awake -> safe key pressed (shift)
+[2026-10-28 17:36:33] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 17:40:25] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 17:40:28] User activity detected -> keep-awake paused
+[2026-10-28 17:43:13] Idle keep-awake -> safe key pressed (f15)
+[2026-10-28 17:45:14] Idle keep-awake -> safe key pressed (ctrl)
+[2026-10-28 17:48:12] Idle keep-awake -> safe key pressed (f15)
+[2026-10-28 17:50:24] Linux idle method: GNOME Mutter
+[2026-10-28 17:50:24] Linux key method: uinput (evdev)
+[2026-10-28 17:50:24] Linux key method: uinput (evdev)
+[2026-10-28 17:50:42] Linux idle method: GNOME Mutter
+[2026-10-28 17:50:42] Linux key method: uinput (evdev)
+[2026-10-28 17:50:42] Linux key method: uinput (evdev)

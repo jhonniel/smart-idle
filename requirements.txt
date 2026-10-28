@@ -1,3 +1,11 @@
-# mimi dependencies (Windows only)
-# Install with: python -m pip install -r requirements.txt
+# mimi dependencies (Windows, macOS, Linux)
+# Install with: python -m pip install -r requirements.txt   (use python3 on macOS/Linux)
+#
+# Linux also needs system packages:
+#   sudo apt install python3-tk python3-dev scrot xprintidle
+# and access to /dev/uinput for the ghost key (see README "Linux" section).
+
 pyautogui>=0.9.54
+
+# Linux-only: inject keys via /dev/uinput so it works on both X11 and Wayland.
+evdev>=1.6.0; sys_platform == "linux"
