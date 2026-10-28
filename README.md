@@ -4,61 +4,65 @@ Hidden Windows idle monitor. After **2 minutes** of no keyboard/mouse activity, 
 
 Safe keys are non-typing only (`F15`, `F16`, `Ctrl`, `Shift`) so the focused app does not receive letters or numbers.
 
-Also blocks screenshots for **capture apps** (for example Hubstaff-style screen samples): your screen looks normal to you, but those apps should get a **black / blank** image instead of your real desktop.
-
 Runs in the background with no console window, and can start automatically at login.
 
 ---
 
 ## Requirements
 
-- Windows
-- Python 3 (with `pip`)
-- Internet (only for the one-time package install)
+| Requirement | Details |
+|-------------|---------|
+| **Operating system** | Windows 10 or 11 (uses Windows-only APIs via `ctypes`; it will not run on macOS or Linux) |
+| **Python** | Python 3.8+ with `pip` (tested on Python 3.14). The `pythonw.exe` that ships with Python is also required for hidden mode. |
+| **Python package** | `pyautogui` (>= 0.9.54) — listed in `requirements.txt` |
+| **Internet** | Needed once, only to install the package |
+
+Everything else mimi uses (`ctypes`, `random`, `time`, `pathlib`) is part of the Python standard library, so there is nothing else to install.
 
 ---
 
 ## Step 1 — Install Python
 
-1. Install Python from [python.org](https://www.python.org/downloads/) or Scoop.
-2. During install, enable **Add Python to PATH** if using the official installer.
-3. Open PowerShell and confirm:
+1. Install Python 3.8 or newer from [python.org](https://www.python.org/downloads/) (or via Scoop: `scoop install python`).
+2. If using the official installer, enable **Add Python to PATH** on the first screen.
+3. Open PowerShell and confirm both commands print a version:
 
 ```powershell
 python --version
 pythonw --version
 ```
 
-Both should print a version number.
+If `python` is not recognized, close and reopen PowerShell, or reinstall with PATH enabled.
 
 ---
 
 ## Step 2 — Get the project files
 
-Put these files in one folder, for example:
+Put these files together in one folder, for example `C:\Users\<YourName>\Documents\Projects\mimi\`:
 
-`C:\Users\<YourName>\Documents\Projects\mimi\`
-
-| File | Purpose |
-|------|---------|
-| `mimi.py` | Main script (safe-key keep-awake + screenshot block) |
-| `mimi.vbs` | Hidden launcher (no console window) |
-| `requirements.txt` | Python dependencies |
+| File | Purpose | Required? |
+|------|---------|-----------|
+| `mimi.py` | Main script (safe-key keep-awake) | Yes |
+| `mimi.vbs` | Hidden launcher + watchdog (no console window) | Yes, for hidden/auto-start use |
+| `requirements.txt` | Python dependency list | Yes, for install |
+| `stop_mimi.ps1` | Stops mimi cleanly | Optional |
+| `README.md` | This guide | Optional |
+| `mimi.log` | Created automatically at runtime | Auto-generated |
 
 ---
 
-## Step 3 — Install dependencies
+## Step 3 — Install the requirements
 
-Open PowerShell in the project folder:
+Open PowerShell in the project folder and install from `requirements.txt`:
 
 ```powershell
 cd C:\Users\<YourName>\Documents\Projects\mimi
 python -m pip install -r requirements.txt
 ```
 
-This installs `pyautogui` (and its helpers).
+This installs `pyautogui` and its helper packages.
 
-Confirm:
+Confirm it imports and prints a version:
 
 ```powershell
 python -c "import pyautogui; print(pyautogui.__version__)"
@@ -78,14 +82,11 @@ You should see:
 
 ```text
 mimi is running...
-Screenshot block is ON (capture apps get black screen).
 Safe-key keep-awake starts after 2 minutes of inactivity.
 Safe keys: f15, f16, ctrl, shift
 ```
 
 Leave the PC idle for 2 minutes — it should print when a safe key is pressed. Press `Ctrl+C` to stop.
-
-To test screenshot blocking: with mimi running, take a screenshot from another app (or Snipping Tool / Win+Shift+S). Captured windows should appear black. Your live screen should still look normal.
 
 ---
 
@@ -134,15 +135,6 @@ After this, mimi starts automatically every time you sign in to Windows.
 2. If idle for **120 seconds**, presses one **random safe key** from `F15`, `F16`, `Ctrl`, `Shift`.
 3. While still idle, presses another random safe key every **30 seconds**.
 4. If you move the mouse or type, automatic presses stop until idle again.
-5. Every **2 seconds**, marks visible windows with Windows `SetWindowDisplayAffinity` (`WDA_EXCLUDEFROMCAPTURE`, fallback `WDA_MONITOR`) so screenshot / monitoring apps (like Hubstaff samples) should get black / blank content. You still see the screen normally.
-
-### Screenshot block limits
-
-- Aimed at apps that take periodic desktop screenshots (Hubstaff and similar).
-- Uses the built-in Windows capture-exclusion API — your display stays normal.
-- May not stop every capture method (some elevated tools, custom drivers, or a phone camera).
-- New windows are covered on the next protect pass (every 2 seconds).
-- After updating `mimi.py`, restart mimi so the new protection is active.
 
 ---
 
@@ -153,21 +145,41 @@ Edit `mimi.py`:
 ```python
 IDLE_LIMIT = 120          # seconds before first keep-awake press
 PRESS_INTERVAL = 30       # seconds between presses while idle
-PROTECT_INTERVAL = 2      # seconds between screenshot-block refreshes
 SAFE_KEYS = ("f15", "f16", "ctrl", "shift")  # non-typing keys only
 ```
 
-After changing settings, restart mimi (stop the old process, then run `mimi.vbs` again).
+After changing settings, restart mimi (use `stop_mimi.ps1` or Task Manager, then run `mimi.vbs` again).
+
+---
+
+## Auto-restart on crash
+
+`mimi.vbs` runs as a hidden watchdog:
+
+1. Starts `mimi.py` with `pythonw.exe`
+2. If it crashes or exits, waits **5 seconds** and starts it again
+3. `mimi.py` also restarts itself on internal errors
+
+Crash details are written to **`mimi.log`**.
 
 ---
 
 ## Stop mimi
 
-1. Open **Task Manager** (`Ctrl + Shift + Esc`)
-2. Find **pythonw.exe**
-3. End the task
+**Option A — stop script (recommended):**
 
-To disable auto-start: delete `mimi.lnk` from the Startup folder (`shell:startup`).
+```powershell
+.\stop_mimi.ps1
+```
+
+This creates `mimi.stop` and the watchdog exits cleanly.
+
+**Option B — Task Manager:**
+
+1. End **wscript.exe** (the watchdog — stops auto-restart)
+2. End **pythonw.exe** if it is still running
+
+To disable auto-start at login: delete `mimi.lnk` from the Startup folder (`shell:startup`).
 
 ---
 
@@ -180,8 +192,8 @@ To disable auto-start: delete `mimi.lnk` from the Startup folder (`shell:startup
 | VBS does nothing | Confirm `pythonw.exe` works; run `python mimi.py` to see errors |
 | Does not start at login | Check Startup has `mimi.lnk` pointing to the correct `mimi.vbs` path |
 | Shortcut broken after moving folder | Update or recreate the Startup shortcut |
-| Screenshots not black | Restart mimi; some tools ignore this Windows flag |
-| Some windows still capture fine | Elevated / protected apps may ignore affinity |
+| mimi keeps coming back after kill | End **wscript.exe** (watchdog), or run `stop_mimi.ps1` |
+| Crashes repeat | Check `mimi.log` for the error at the bottom |
 
 ---
 
